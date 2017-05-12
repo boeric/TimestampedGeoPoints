@@ -1,0 +1,25 @@
+{
+  "name": "timestamped-geo-points",
+  "version": "1.0.0",
+  "description": "Expands an array of geo vertices to timestamped geo points",
+  "main": "expandTime.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/boeric/timestamped-geo-points.git"
+  },
+  "keywords": [
+    "geo",
+    "geojson",
+    "vertex",
+    "point"
+  ],
+  "author": "Bo Ericsson <bo@boe.net> (http://www.boe.net)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/boeric/timestamped-geo-points/issues"
+  },
+  "homepage": "https://github.com/boeric/timestamped-geo-points#readme"
+}

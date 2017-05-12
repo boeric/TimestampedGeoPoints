@@ -37,5 +37,5 @@ for example:
 If the output file is missing, the output GeoJson will be sent to standard output.
 
 #### Test files
-The repo contains one input test file, `octagonGeo.json`. If this is used as input to `expandTime.js`, the output should be identical to `outputGeo.json`, also included in the repo. Please see the Wiki for some screenshots of the input and output files.
+The repo contains one input test file, `octagonGeo.json`. If this is used as input to `expandTime.js`, the output should be identical to `outputGeo.json`, also included in the repo. Please see the included `png` screenshots of the input and output files.
 

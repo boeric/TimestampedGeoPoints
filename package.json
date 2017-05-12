@@ -21,5 +21,8 @@
   "bugs": {
     "url": "https://github.com/boeric/timestamped-geo-points/issues"
   },
-  "homepage": "https://github.com/boeric/timestamped-geo-points#readme"
+  "homepage": "https://github.com/boeric/timestamped-geo-points#readme",
+  "dependencies": {
+    "geodesy": "^1.1.1"
+  }
 }

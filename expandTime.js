@@ -44,6 +44,12 @@ const points = features.filter(d => {
 });
 console.log("Geojson total vertex count", points.length)
 
+// Ensure that we have at least two verticies
+if (points.length < 2) {
+  console.log("At least two verticies are required, exiting...);
+  process.exit(0);
+}
+
 // Setup for point generation
 const timePoints = [];
 let timeStamp = 0;
@@ -57,7 +63,7 @@ points.length = vertexLimit === -1 ? points.length : vertexLimit; //9;
 points.forEach((d, vertexIndex, a) => {
   let lat, lon;
 
-  // Process only Points
+  // Process only Point features
   if (d.geometry.type !== "Point") {
     return;
   }
@@ -66,37 +72,33 @@ points.forEach((d, vertexIndex, a) => {
   }
   if (debug) console.log("\n\npoint" + vertexIndex);
 
-  // Compute base LatLon point
+  // This vertex
+  if (debug) console.log("   this vertex", d.geometry.coordinates)
   lon = d.geometry.coordinates[0];
   lat = d.geometry.coordinates[1];
   const p1 = new LatLon(lat, lon);
 
-  // This point
-  if (debug) console.log("   this point", d.geometry.coordinates)
-
-  // Get next vertex
+  // Next vertex
   const n = a[vertexIndex + 1];
-  if (debug) console.log("   next point", n.geometry.coordinates)
-
-  // Compute next LatLon point
+  if (debug) console.log("   next vertex", n.geometry.coordinates)
   lon = n.geometry.coordinates[0];
   lat = n.geometry.coordinates[1];
-  var p2 = new LatLon(lat, lon);
+  const p2 = new LatLon(lat, lon);
 
-  // Bearing
+  // Compute bearing
   const bearing = p1.initialBearingTo(p2)
   if (debug) console.log("   bearing", bearing)
 
-  // Current speed
+  // Get current speed
   const speed = d.properties.speed || 35;
   if (debug) console.log("   speed", speed);
 
-  if (debug) console.log("   remain.time", remaining.time);
-  // Compute the remaining distance from prior vertex
+  // Compute the start distance (using remaining time from prior vertex)
   const startDistance = speed * METERS_PER_MILE * remaining.time / 3600;
+  if (debug) console.log("   remain.time", remaining.time);
   if (debug) console.log("   startDistance", startDistance);
 
-  // Get distance between this point and next point
+  // Compute the distance between this vertex and next vertex
   const fullDistance = p1.distanceTo(p2);
   if (debug) console.log("   fullDistance", fullDistance);
 
@@ -104,7 +106,7 @@ points.forEach((d, vertexIndex, a) => {
   const effectiveDistance = fullDistance - startDistance;
   if (debug) console.log("   effectiveDistance", effectiveDistance);
 
-  // Get number of segments
+  // Determine number of segments
   const oneSecDistance = speed * METERS_PER_MILE / 3600;
   const segmentCount = Math.floor(effectiveDistance / oneSecDistance);
   const usedTime = segmentCount;
@@ -117,7 +119,7 @@ points.forEach((d, vertexIndex, a) => {
   if (debug) console.log("   remaining.distance", remaining.distance);
   if (debug) console.log("   remaining.time", remaining.time);
 
-  // Generate time spaced points
+  // Generate time spaced points between this vertex and the next vertex
   const segments = [];
   let currDistance = startDistance;
   for (var i = 0; i <= segmentCount; i++) {
@@ -132,7 +134,7 @@ points.forEach((d, vertexIndex, a) => {
   timeStamp += usedTime;
 })
 
-// Create a GeoJson point
+// Create GeoJson point
 function createPoint(point, time, segment) {
   const coordinates = [ point.lon, point.lat ]
 
@@ -147,11 +149,11 @@ function createPoint(point, time, segment) {
       segment: segment
     }
   }
-
+  
 }
 
-// Create GeoJson wrapper
-var geoJson = {
+// Wrap in a GeoJson feature collection
+const geoJson = {
   type: "FeatureCollection",
   features: timePoints
 }
@@ -161,9 +163,11 @@ var output = JSON.stringify(geoJson, null, 2);
 
 // Determine output device
 if (outputFile === "stdOut") {
+  // Std out
   console.log(output);
 } else {
   try {
+    // File output
     fs.writeFileSync(outputFile, output, "utf8");
     console.log("Wrote output file [" + outputFile + "] with " + timePoints.length + " timestamped poins");
   } catch(e) {

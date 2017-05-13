@@ -27,6 +27,7 @@ The input file must be a valid GeoJson file. In the example below, the first fea
         "speed": 35
       }
     },
+    ...
 ```
 
 #### Output file

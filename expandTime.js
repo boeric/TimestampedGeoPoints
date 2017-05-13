@@ -46,7 +46,7 @@ console.log("Geojson total vertex count", points.length)
 
 // Ensure that we have at least two verticies
 if (points.length < 2) {
-  console.log("At least two verticies are required, exiting...);
+  console.log("At least two verticies are required, exiting...");
   process.exit(0);
 }
 
@@ -149,7 +149,7 @@ function createPoint(point, time, segment) {
       segment: segment
     }
   }
-  
+
 }
 
 // Wrap in a GeoJson feature collection

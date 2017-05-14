@@ -1,4 +1,4 @@
-# timestamped-geo-points
+# Timestamped Geo Points
 Expands an array of geo vertices to timestamped geo points. Previously captured verticies (input file) indicate geo locations where a geo path is changing direction. For example, a vehicle's path along a road may be captured with a set of verticies, each of which indicate where the vechicle's path is changing direction. The purpose with the `expandTime.js` module is to expand the array of verticies to an array of geo points which are spaced evenly in the time domain, and interpolated properly between the input verticies. One point is generated each second using the current speed (with the default of 35 Mph). Each vertex can have its own speed, which will be maintained for all points generated between the vertex and the following vertex.
 
 #### Installation, etc.

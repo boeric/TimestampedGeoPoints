@@ -37,7 +37,7 @@ try {
   process.exit(0);
 }
 
-// Include only points
+// Include only geo Points (ignore LineString, etc.)
 const features = data.features;
 const points = features.filter(d => {
   return d.geometry.type === "Point"
@@ -57,6 +57,7 @@ const remaining = {
   time: 0,
   distance: 0
 }
+let cumDistance = 0;
 
 // Generate the points
 points.length = vertexLimit === -1 ? points.length : vertexLimit; //9;
@@ -126,16 +127,20 @@ points.forEach((d, vertexIndex, a) => {
     const time = timeStamp + i;
     const point = p1.destinationPoint(currDistance, bearing);
 
-    let generatePoint = lastFirstOnly ? i === 0 || i === segmentCount : true;
-    if (generatePoint) timePoints.push(createPoint(point, time, vertexIndex))
+    // Update segment and total distance
     currDistance += oneSecDistance;
+    cumDistance += oneSecDistance;
+
+    // Generate the point
+    let generatePoint = lastFirstOnly ? i === 0 || i === segmentCount : true;
+    if (generatePoint) timePoints.push(createPoint(point, time, vertexIndex, cumDistance, speed, bearing))
   }
 
   timeStamp += usedTime;
 })
 
 // Create GeoJson point
-function createPoint(point, time, segment) {
+function createPoint(point, time, segment, distance, speed, bearing) {
   const coordinates = [ point.lon, point.lat ]
 
   return {
@@ -146,7 +151,10 @@ function createPoint(point, time, segment) {
     },
     properties: {
       time: time,
-      segment: segment
+      segment: segment,
+      distance: distance,
+      speed: speed,
+      bearing: bearing
     }
   }
 
